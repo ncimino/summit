@@ -1,0 +1,48 @@
+<% content_for :head do %>
+    <%= favicon_link_tag('/assets/favicon.ico') %>
+    <%= stylesheet_link_tag "application" %>
+    <%= javascript_include_tag "application" %>
+    <%= csrf_meta_tag %>
+<% end %>
+
+<% content_for :header do %>
+    <nav class="span-24 append-bottom">
+      <ul>
+        <%= render :partial => "pages/links", :collection => @display_pages.topbar, :as => :page, :locals => {:classes => "left hover"} %>
+        <% if user_signed_in? %>
+            <%= link_to '<li class="left hover">Account</li>'.html_safe, edit_user_registration_path %>
+            <%= link_to '<li class="right hover">Sign out</li>'.html_safe, destroy_user_session_path, :method => :delete %>
+            <li class="right last lighter"><%= current_user.email %></li>
+        <% else %>
+            <%= link_to '<li class="right hover">Sign in</li>'.html_safe, user_session_path %>
+            <%= link_to '<li class="right hover">Sign up</li>'.html_safe, new_user_registration_path %>
+        <% end %>
+      </ul>
+    </nav>
+    <banner>
+      <%= link_to logo, root_path, {:class => "right prepend-1"} %>
+      <h1 class="left alt append-1"><%= yield(:title) %></h1>
+      <% flash.each do |key, value| %>
+          <div id="notice" class="left flash <%= key %>"><%= value %></div>
+      <% end %>
+    </banner>
+    <hr/>
+<% end %>
+
+<% content_for :sidebar do %>
+    <%= render 'shared/sidebar', :sidebar => @display_pages.sidebar %>
+<% end %>
+
+<% content_for :userbar do %>
+    <% if user_signed_in? %>
+        <%= render 'shared/sidebar', :sidebar => @display_pages.userbar %>
+    <% end %>
+<% end %>
+
+<% content_for :footer do %>
+    <nav class="span-24 prepend-top last">
+      <ul>
+        <%= render :partial => "pages/links", :collection => @display_pages.bottombar, :as => :page, :locals => {:classes => "left hover"} %>
+      </ul>
+    </nav>
+<% end %>

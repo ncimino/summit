@@ -1,0 +1,29 @@
+<% title "Sign up" %>
+
+<div class="left span-9">
+    <h2>Sign up</h2>
+
+    <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+      <%= render 'shared/error_messages', :object => f.object %>
+
+      <p><%= f.label :username %></p>
+      <p><%= f.text_field :username, :class => "text"  %></p>
+
+      <p><%= f.label :email %></p>
+      <p><%= f.email_field :email, :class => "text"  %></p>
+
+    <% if @user.password_required? %>
+      <p><%= f.label :password %></p>
+      <p><%= f.password_field :password, :class => "text"  %></p>
+
+      <p><%= f.label :password_confirmation %></p>
+      <p><%= f.password_field :password_confirmation, :class => "text"  %></p>
+    <% end %>
+
+      <p><%= f.submit "Sign up" %></p>
+    <% end %>
+
+    <%= render :partial => "devise/shared/links" %>
+</div>
+
+<%= render 'shared/open_auth' %>

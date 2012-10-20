@@ -1,0 +1,145 @@
+body {
+}
+
+a {
+    color: gray;
+    border: none;
+}
+
+.box {
+    padding: 1.5em;
+    margin-bottom: 1.5em;
+    background: #f0f0f0;
+    border: 3px outset gray;
+}
+
+.ui-icon-grip-solid-horizontal {
+    cursor: move;
+}
+
+.debug_dump {
+    clear: both;
+    background-color: #e9967a;
+    border: 2px dashed black;
+    padding: 2em;
+    margin: 2em;
+}
+
+.field_with_errors {
+    display: initial;
+    font-style: italic;
+    color: #8A1F11;
+}
+
+.list {
+    background-color: #EEE;
+    border-top: 2px dotted #888;
+    padding: 1px 3px;
+}
+
+li.ui-state-highlight {
+    display: block;
+    height: 2em;
+    list-style-type: none;
+}
+
+.item {
+    list-style-type: none;
+    padding: 3px;
+    margin-bottom: 1px;
+}
+
+.list-action {
+    margin: 3px 5px;
+    top: 0;
+}
+
+.lighter {
+    font-weight: lighter;
+}
+
+select {
+    max-width: 40em;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0 0.5em;
+}
+
+h1 {
+    /*font-family: Livory-RegularItalic;*/
+    /*font-family: Georgia,Palatino,Times,"MS Serif",serif;*/
+}
+
+aside nav ul li {
+    list-style-type: none;
+    color: black;
+    text-transform:uppercase;
+    font-weight: bolder;
+}
+
+aside nav ul li:hover {
+    text-decoration: underline;
+    color: #ff7f50;
+}
+
+header nav ul li {
+    list-style-type: none;
+    padding: 0.5em;
+    border-bottom: 2px solid black;
+    color: white;
+    font-weight: bolder;
+}
+
+footer nav ul li {
+    list-style-type: none;
+    padding: 0.5em;
+    border-top: 2px solid black;
+    color: white;
+    font-weight: bolder;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+header nav {
+    background-color: black;
+    border-bottom: 2px solid lightgray;
+}
+
+footer nav {
+    background-color: black;
+    border-top: 2px solid lightgray;
+}
+
+header nav ul li.hover:hover, nav ul li.selected {
+    color: #ff7f50;
+    border-bottom: 2px solid #F58400;
+}
+
+footer nav ul li.hover:hover, nav ul li.selected {
+    color: #ff7f50;
+    border-top: 2px solid #F58400;
+}
+
+.authentication {
+    border: 1px solid black;
+    margin: 1em;
+    padding: 0.5em;
+    background: #EEE;
+}
+
+.auth_provider img {
+    display: block;
+}
+
+.auth_provider {
+    float: left;
+    text-decoration: none;
+    margin-right: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+}

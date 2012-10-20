@@ -1,0 +1,11 @@
+<h2>Sign In Using...</h2>
+
+<%= render 'shared/open_auth' %>
+
+<% unless user_signed_in? %>
+    <div class="left span-9 last">
+      <h2 class="alt">... or a Normal Account:</h2>
+      <%= render 'shared/login_form' %>
+      <%= render "devise/shared/links" %>
+    </div>
+<% end %>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= yield(:title) %></title>
+  <%= yield :head %>
+</head>
+<body>
+<div class="container">
+  <header>
+      <%= yield :header %>
+  </header>
+  <content>
+    <div class="span-4 colborder">
+      <%= yield :sidebar %>
+      <%= yield :userbar %>
+    </div>
+    <div class="span-18 last">
+      <%= yield %>
+    </div>
+  </content>
+  <footer>
+    <%= yield :footer %>
+  </footer>
+  <%= debug(params) if Rails.env.development? %>
+</div>
+</body>
+</html>
