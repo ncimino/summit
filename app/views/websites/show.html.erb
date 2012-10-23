@@ -1,0 +1,40 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @website.name %>
+</p>
+
+<p>
+  <b>Domain:</b>
+  <%= @website.domain %>
+</p>
+
+<p>
+  <b>Deploy path:</b>
+  <%= @website.deploy_path %>
+</p>
+
+<p>
+  <b>Post receive path:</b>
+  <%= @website.post_receive_path %>
+</p>
+
+<p>
+  <b>Git enabled:</b>
+  <%= @website.git_enabled %>
+</p>
+
+<p>
+  <b>Nginx path:</b>
+  <%= @website.nginx_path %>
+</p>
+
+<p>
+  <b>Nginx enabled:</b>
+  <%= @website.nginx_enabled %>
+</p>
+
+
+<%= link_to 'Edit', edit_website_path(@website) %> |
+<%= link_to 'Back', websites_path %>

@@ -1,0 +1,35 @@
+<h1>Listing websites</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Domain</th>
+    <th>Deploy path</th>
+    <th>Post receive path</th>
+    <th>Git enabled</th>
+    <th>Nginx path</th>
+    <th>Nginx enabled</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @websites.each do |website| %>
+  <tr>
+    <td><%= website.name %></td>
+    <td><%= website.domain %></td>
+    <td><%= website.deploy_path %></td>
+    <td><%= website.post_receive_path %></td>
+    <td><%= website.git_enabled %></td>
+    <td><%= website.nginx_path %></td>
+    <td><%= website.nginx_enabled %></td>
+    <td><%= link_to 'Show', website %></td>
+    <td><%= link_to 'Edit', edit_website_path(website) %></td>
+    <td><%= link_to 'Destroy', website, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Website', new_website_path %>

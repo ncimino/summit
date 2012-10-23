@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  domain: MyString
+  deploy_path: MyString
+  post_receive_path: MyString
+  git_enabled: false
+  nginx_path: MyString
+  nginx_enabled: false
+
+two:
+  name: MyString
+  domain: MyString
+  deploy_path: MyString
+  post_receive_path: MyString
+  git_enabled: false
+  nginx_path: MyString
+  nginx_enabled: false
