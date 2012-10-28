@@ -7,3 +7,4 @@
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
 Page.create(:name => 'Home', :title => 'Welcome to Home!', :content => '<h2>Content</h2>This is the content of the home page...', :location => 'topbar', :url => '', :ordinal => '1')
+AdminUser.create!(:email=>'admin@example.com',:password=>'password')
