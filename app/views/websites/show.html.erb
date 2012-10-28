@@ -1,37 +1,60 @@
+<% title @website.name.humanize  %>
+<%= render 'shared/error_messages', :object => @website %>
+
+<!--<p>-->
+  <!--<b>Name:</b>-->
+  <!--<%= @website.name %>-->
+<!--</p>-->
+<fieldset>
 <p>
-  <b>Name:</b>
-  <%= @website.name %>
+  <b>Domain:</b><%= @website.domain %><br />
+  <b>Deploy path:</b><%= @website.deploy_path %>
+  <%= render 'shared/dir_check', :path => :deploy_path %>
+</p>
+</fieldset>
+
+<fieldset>
+<p>
+  <b>Git repo path:</b><%= @website.git_repo_path %><br />
+  <b>Post receive path:</b><%= @website.post_receive_path %>
+  <%= render 'shared/dir_check', :path => :post_receive_path %>
 </p>
 
 <p>
-  <b>Domain:</b>
-  <%= @website.domain %>
+  <b>Git enabled:</b><%= @website.git_enabled %><br />
+  <b>Git repo path:</b><%= @website.git_repo_path %><br />
+  <b>Git enabled path:</b><%= @website.enabled_git_path %>
+  <%= render 'shared/dir_check', :path => :enabled_git_path %>
 </p>
+</fieldset>
 
-<p>
-  <b>Deploy path:</b>
-  <%= @website.deploy_path %>
-</p>
-
-<p>
-  <b>Post receive path:</b>
-  <%= @website.post_receive_path %>
-</p>
-
-<p>
-  <b>Git enabled:</b>
-  <%= @website.git_enabled %>
-</p>
-
+<fieldset>
 <p>
   <b>Nginx path:</b>
   <%= @website.nginx_path %>
+  <%= render 'shared/dir_check', :path => :nginx_path %>
 </p>
 
 <p>
-  <b>Nginx enabled:</b>
-  <%= @website.nginx_enabled %>
+  <b>Nginx enabled:</b><%= @website.nginx_enabled %><br />
+  <b>Nginx enabled path:</b><%= @website.enabled_nginx_path %>
+  <%= render 'shared/dir_check', :path => :enabled_nginx_path %>
 </p>
+</fieldset>
+
+<hr />
+
+<p>
+  <b>Default user (<%= Summit::Application.config.gitolite_user %>) has repository access:</b>
+  <br/>
+  <% if @website.user_in_conf? %>
+    <p class="success">User exists, force
+  <% else %>
+    <p class="error">User does not exist,
+  <% end %>
+  <%= link_to 'generate', run_step_path(@website,:add_user_to_repository) %>?</p>
+</p>
+
 
 
 <%= link_to 'Edit', edit_website_path(@website) %> |

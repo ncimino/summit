@@ -1,45 +1,66 @@
 <%= form_for(@website) do |f| %>
-  <% if @website.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@website.errors.count, "error") %> prohibited this website from being saved:</h2>
 
-      <ul>
-      <% @website.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
+    <%= render 'shared/error_messages', :object => f.object %>
+    <%= image_tag "reload.png", :class => "cursor right", :id => "reload", :title => "Reload ALL to defaults" %>
+
+    <div class="field">
+      <%= f.label :name %>
+      <br/>
+      <%= f.text_field :name, :class => "text" %>
     </div>
-  <% end %>
 
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name, :class => "text" %>
-  </div>
-  <div class="field">
-    <%= f.label :domain %><br />
-    <%= f.text_field :domain, :class => "text" %>
-  </div>
-  <div class="field">
-    <%= f.label :deploy_path %><br />
-    <%= f.text_field :deploy_path, { :class => "text", :size => "256", :style => "width: 600px;" } %>
-  </div>
-  <div class="field">
-    <%= f.label :post_receive_path %><br />
-    <%= f.text_field :post_receive_path, { :class => "text", :size => "256", :style => "width: 600px;" } %>
-  </div>
-  <div class="field">
-    <%= f.label :git_enabled %><br />
-    <%= f.check_box :git_enabled %>
-  </div>
-  <div class="field">
-    <%= f.label :nginx_path %><br />
-    <%= f.text_field :nginx_path, { :class => "text", :size => "256", :style => "width: 600px;" } %>
-  </div>
-  <div class="field">
-    <%= f.label :nginx_enabled %><br />
-    <%= f.check_box :nginx_enabled %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+    <fieldset>
+    <div class="field">
+      <%= f.label :domain %>
+      <br/>
+      <%= f.text_field :domain, :class => "text" %>
+    </div>
+    <div class="field">
+      <%= f.label :deploy_path %>
+      <br/>
+      <%= f.text_field :deploy_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+    </div>
+    </fieldset>
+    <fieldset>
+      <div class="field">
+        <%= f.label :git_repo_path %>
+        <br/>
+        <%= f.text_field :git_repo_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+      </div>
+      <div class="field">
+        <%= f.label :post_receive_path %>
+        <br/>
+        <%= f.text_field :post_receive_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+      </div>
+      <div class="field">
+        <%= f.label :enabled_git_path %>
+        <br/>
+        <%= f.text_field :enabled_git_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+      </div>
+      <div class="field">
+        <%= f.label :git_enabled %>
+        <br/>
+        <%= f.check_box :git_enabled %>
+      </div>
+    </fieldset>
+    <fieldset>
+      <div class="field">
+        <%= f.label :nginx_path %>
+        <br/>
+        <%= f.text_field :nginx_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+      </div>
+      <div class="field">
+        <%= f.label :enabled_nginx_path %>
+        <br/>
+        <%= f.text_field :enabled_nginx_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+      </div>
+      <div class="field">
+        <%= f.label :nginx_enabled %>
+        <br/>
+        <%= f.check_box :nginx_enabled %>
+      </div>
+    </fieldset>
+    <div class="actions">
+      <%= f.submit %>
+    </div>
 <% end %>

@@ -1,0 +1,88 @@
+echo "** Running as: $USER"
+
+DOMAIN=<%= domain %>
+# ruby -r rubygems -e "p Gem.path"
+RUBY_PATH=/usr/lib/ruby/gems/1.9.1
+
+RELEASE_DIR=/srv/www/$DOMAIN/releases/`date '+%Y%m%d_%H%M%S'`
+CURRENT_DIR=/srv/www/$DOMAIN/current
+PRIVATE_DIR=/srv/www/$DOMAIN/private
+SHARED_DIR=/srv/www/$DOMAIN/shared
+LOGS_DIR=/srv/www/$DOMAIN/shared/logs
+SECRET_FILES=("config/initializers/secret_token.rb" "config/initializers/omniauth.rb" "config/database.yml")
+UC_DIR=/srv/www/updating
+
+echo "** Backing up DB: $SHARED_DIR"
+pushd $CURRENT_DIR
+sudo rake backup
+popd
+
+echo "** Unlinking from: $CURRENT_DIR"
+sudo unlink $CURRENT_DIR
+echo "** Linking that to: $UC_DIR"
+sudo ln -s $UC_DIR $CURRENT_DIR
+
+if [[ ! -e $PRIVATE_DIR ]]; then
+    sudo mkdir -p $PRIVATE_DIR
+elif [[ ! -d $PRIVATE_DIR ]]; then
+    echo "** $PRIVATE_DIR already exists but is not a directory" 1>&2
+    exit
+else
+    echo "** $PRIVATE_DIR already exists"
+fi
+
+echo "** Creating release directory: $RELEASE_DIR"
+sudo mkdir -p $RELEASE_DIR
+echo "** Creating shared directory: $SHARED_DIR"
+sudo mkdir -p $SHARED_DIR
+echo "** Creating logs directory: $LOGS_DIR"
+sudo mkdir -p $LOGS_DIR
+
+if [[ ! -e ${LOGS_DIR}/access.log ]]; then
+    sudo touch ${LOGS_DIR}/access.log
+fi
+
+echo "** Using Git to deploy repo in: $RELEASE_DIR"
+sudo GIT_WORK_TREE=$RELEASE_DIR git checkout -f
+
+#echo "** Unlinking from: $CURRENT_DIR"
+#sudo unlink $CURRENT_DIR
+#echo "** Linking that to: $RELEASE_DIR"
+#sudo ln -s $RELEASE_DIR $CURRENT_DIR
+#echo "** Changing Permissions on: $RELEASE_DIR"
+sudo chmod 755 -R $RELEASE_DIR
+#sudo chmod 775 -R ${CURRENT_DIR}/log
+
+#echo "** Changing to: $CURRENT_DIR"
+#cd $CURRENT_DIR
+echo "** Changing to: $RELEASE_DIR"
+cd $RELEASE_DIR
+
+for file in "${SECRET_FILES[@]}"
+do
+    echo "** Linking: ${PRIVATE_DIR}/$file ${RELEASE_DIR}/$file"
+    sudo ln -s ${PRIVATE_DIR}/$file ${RELEASE_DIR}/$file
+done
+
+sudo bundle install --without development test
+sudo bundle exec rake db:migrate RAILS_ENV=production
+#sudo bundle rake db:schema:load RAILS_ENV=production
+sudo bundle exec rake assets:precompile RAILS_ENV=production
+
+sudo chmod 755 -R $RUBY_PATH
+sudo chmod 755 -R $RELEASE_DIR
+sudo chmod 755 -R $SHARED_DIR
+sudo chmod 755 -R $LOGS_DIR
+
+sudo /etc/init.d/nginx restart
+
+echo "** Unlinking from: $CURRENT_DIR"
+sudo unlink $CURRENT_DIR
+echo "** Linking that to: $RELEASE_DIR"
+sudo ln -s $RELEASE_DIR $CURRENT_DIR
+echo "** Changing Permissions on: $RELEASE_DIR"
+sudo chmod 755 -R $RELEASE_DIR
+sudo chmod 775 -R ${CURRENT_DIR}/log
+
+echo "Done."
+

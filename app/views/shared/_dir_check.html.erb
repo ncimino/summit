@@ -1,0 +1,7 @@
+<br/>
+<% if @checks[path] %>
+  <p class="success"><%= path.to_s.humanize %> exists, force
+<% else %>
+  <p class="error"><%= path.to_s.humanize %> does not exist,
+<% end %>
+<%= link_to 'generate', run_step_path(@website,path) %>?</p>

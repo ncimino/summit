@@ -1,14 +1,29 @@
 class WebsitesController < ApplicationController
   before_filter :authenticate_user!
+
+  def run_step
+    @website = Website.find(params[:id])
+    @checks = @website.get_checks
+    if @website.run_step(params[:step])
+      redirect_to @website, notice: "#{params[:step].humanize} generated successfully."
+    else
+      render action: "show"
+    end
+  end
+
   def index
     @websites = Website.all
   end
 
   def show
     @website = Website.find(params[:id])
+    @checks = @website.get_checks
   end
+
   def new
     @website = Website.new
+    @website.git_enabled = true
+    @website.nginx_enabled = true
   end
 
   def edit
