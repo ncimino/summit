@@ -5,7 +5,8 @@ class Website < ActiveRecord::Base
                         :enabled_git_path, :git_repo_path
   validates_uniqueness_of :deploy_path, :domain, :name, :nginx_path, :post_receive_path, :enabled_nginx_path,
                           :enabled_git_path, :git_repo_path
-  validates_format_of :deploy_path, :with => Summit::Application.config.valid_deploy_path, :message => "should match #{Summit::Application.config.valid_deploy_path.source.to_s.gsub(/\\|\./,'')}"
+  validates_format_of :deploy_path, :with => Summit::Application.config.valid_deploy_path,
+                :message => "should match #{Summit::Application.config.valid_deploy_path.source.to_s.gsub(/\\|\./,'')}"
   attr_accessible :enabled_git_path, :enabled_nginx_path, :deploy_path, :domain, :git_enabled, :name, :nginx_enabled,
                   :nginx_path, :post_receive_path, :git_repo_path
 
@@ -49,7 +50,8 @@ class Website < ActiveRecord::Base
         false
       end
     rescue Exception => e
-      errors[:base] << "Could not find #{caller[0][/`.*'/][1..-2].gsub(/_/,' ').gsub(/\?/,'')}, due to<br /> #{e.message}".html_safe
+      errors[:base] << "Could not find #{caller[0][/`.*'/][1..-2].gsub(/_/,' ').gsub(/\?/,'')}, due to <br />
+        #{e.message}".html_safe
       false
     end
   end
@@ -124,6 +126,7 @@ class Website < ActiveRecord::Base
         create_dir File.dirname(post_receive_path)
         erb = ERB.new(File.read(File.join(Rails.root, 'lib', 'templates', 'post-receive'))).result(binding)
         File.open(post_receive_path, 'w') { |f| f.write(erb) }
+        File.chmod(0755,post_receive_path)
       end
       true
     rescue Exception => e
