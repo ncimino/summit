@@ -11,12 +11,10 @@
         <%= render :partial => "pages/links", :collection => @display_pages.topbar, :as => :page, :locals => {:classes => "left hover"} %>
         <% if user_signed_in? %>
             <%= link_to '<li class="left hover">Websites</li>'.html_safe, websites_path %>
-            <%= link_to '<li class="left hover">Account</li>'.html_safe, edit_user_registration_path %>
             <%= link_to '<li class="right hover">Sign out</li>'.html_safe, destroy_user_session_path, :method => :delete %>
             <li class="right last lighter"><%= current_user.email %></li>
         <% else %>
             <%= link_to '<li class="right hover">Sign in</li>'.html_safe, user_session_path %>
-            <%= link_to '<li class="right hover">Sign up</li>'.html_safe, new_user_registration_path %>
         <% end %>
       </ul>
     </nav>

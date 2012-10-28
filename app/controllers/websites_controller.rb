@@ -1,4 +1,5 @@
 class WebsitesController < ApplicationController
+  before_filter :authenticate_user!
   def index
     @websites = Website.all
   end
@@ -37,4 +38,5 @@ class WebsitesController < ApplicationController
     @website.destroy
     redirect_to websites_url
   end
+
 end
