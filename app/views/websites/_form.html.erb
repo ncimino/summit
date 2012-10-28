@@ -7,6 +7,7 @@
       <%= f.label :name %>
       <br/>
       <%= f.text_field :name, :class => "text" %>
+      <%= image_tag "x.png", :class => "cursor clearfield", :title => "Clear field" %>
     </div>
 
     <fieldset>
@@ -14,11 +15,13 @@
       <%= f.label :domain %>
       <br/>
       <%= f.text_field :domain, :class => "text" %>
+      <%= image_tag "x.png", :class => "cursor clearfield", :title => "Clear field" %>
     </div>
     <div class="field">
       <%= f.label :deploy_path %>
       <br/>
       <%= f.text_field :deploy_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+      <%= image_tag "x.png", :class => "cursor clearfield", :title => "Clear field" %>
     </div>
     </fieldset>
     <fieldset>
@@ -26,16 +29,19 @@
         <%= f.label :git_repo_path %>
         <br/>
         <%= f.text_field :git_repo_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+        <%= image_tag "x.png", :class => "cursor clearfield", :title => "Clear field" %>
       </div>
       <div class="field">
         <%= f.label :post_receive_path %>
         <br/>
         <%= f.text_field :post_receive_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+        <%= image_tag "x.png", :class => "cursor clearfield", :title => "Clear field" %>
       </div>
       <div class="field">
         <%= f.label :enabled_git_path %>
         <br/>
         <%= f.text_field :enabled_git_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+        <%= image_tag "x.png", :class => "cursor clearfield", :title => "Clear field" %>
       </div>
       <div class="field">
         <%= f.label :git_enabled %>
@@ -48,11 +54,13 @@
         <%= f.label :nginx_path %>
         <br/>
         <%= f.text_field :nginx_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+        <%= image_tag "x.png", :class => "cursor clearfield", :title => "Clear field" %>
       </div>
       <div class="field">
         <%= f.label :enabled_nginx_path %>
         <br/>
         <%= f.text_field :enabled_nginx_path, {:class => "text", :size => "256", :style => "width: 600px;"} %>
+        <%= image_tag "x.png", :class => "cursor clearfield", :title => "Clear field" %>
       </div>
       <div class="field">
         <%= f.label :nginx_enabled %>
