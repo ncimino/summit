@@ -40,10 +40,14 @@ class Website < ActiveRecord::Base
   def user_in_conf?
     begin
       file_name     = Summit::Application.config.gitolite_tmp.join('conf', 'gitolite.conf')
-      file_content  = File.read(file_name)
-      repo_line     = "\nrepo #{name}\n"
-      user_in_repo  = /(#{repo_line})(.*=.*\n)*(.*=   #{Summit::Application.config.gitolite_user})/
-      user_in_repo =~ file_content
+      if File.exists?(file_name)
+        file_content  = File.read(file_name)
+        repo_line     = "\nrepo #{name}\n"
+        user_in_repo  = /(#{repo_line})(.*=.*\n)*(.*=   #{Summit::Application.config.gitolite_user})/
+        user_in_repo =~ file_content
+      else
+        false
+      end
     rescue Exception => e
       errors[:base] << "Could not find #{caller[0][/`.*'/][1..-2].gsub(/_/,' ').gsub(/\?/,'')}, due to<br /> #{e.message}".html_safe
       false
@@ -59,11 +63,13 @@ class Website < ActiveRecord::Base
         #lexec "git config user.email summit@econtriver.com"
         FileUtils.rm_rf(Summit::Application.config.gitolite_tmp)
         lexec "git clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin #{Summit::Application.config.gitolite_tmp} 2>&1"
-        add_user_to_conf
-        lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp.join('.git')} --work-tree=#{Summit::Application.config.gitolite_tmp} add ."
-        lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp.join('.git')} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
-              "commit -m 'added user #{Summit::Application.config.gitolite_user} to #{name}'"
-        lexec "git push origin master"
+        unless user_in_conf?
+          add_user_to_conf
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp.join('.git')} --work-tree=#{Summit::Application.config.gitolite_tmp} add ."
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp.join('.git')} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                "commit -m 'added user #{Summit::Application.config.gitolite_user} to #{name}'"
+          lexec "git push origin master"
+        end
       end
       true
     rescue Exception => e
