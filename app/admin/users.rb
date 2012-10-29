@@ -10,7 +10,7 @@ ActiveAdmin.register User do
   filter :email
 
   form do |f|
-    f.inputs "Admin Details" do
+    f.inputs "Users Details" do
       f.input :email
       f.input :username
       f.input :password
