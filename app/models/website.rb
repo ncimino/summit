@@ -8,8 +8,7 @@ class Website < ActiveRecord::Base
   validates_format_of :deploy_path, :with => Summit::Application.config.valid_deploy_path,
                 :message => "should match #{Summit::Application.config.valid_deploy_path.source.to_s.gsub(/\\|\./,'')}"
   attr_accessible :enabled_git_path, :enabled_nginx_path, :deploy_path, :domain, :git_enabled, :name, :nginx_enabled,
-                  :nginx_path, :post_receive_path, :git_repo_path, :azmodan
-  attr_accessor :azmodan
+                  :nginx_path, :post_receive_path, :git_repo_path
 
   def run_step(step)
     case step
@@ -90,6 +89,7 @@ class Website < ActiveRecord::Base
         create_dir File.dirname(nginx_path)
         erb = ERB.new(File.read(File.join(Rails.root, 'lib', 'templates', 'nginx'))).result(binding)
         File.open(nginx_path, 'w') { |f| f.write(erb) }
+        lexec "chmod 644 #{nginx_path}"
       end
       true
     rescue Exception => e
