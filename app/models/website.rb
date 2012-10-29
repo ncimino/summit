@@ -40,7 +40,7 @@ class Website < ActiveRecord::Base
 
   def user_in_conf?
     begin
-      file_name       = Summit::Application.config.gitolite_tmp.join('conf', 'gitolite.conf')
+      file_name       = Summit::Application.config.gitolite_tmp + '/conf/gitolite.conf'
       if File.exists?(file_name)
         file_content  = File.read(file_name)
         repo_line     = "\nrepo #{name}\n"
@@ -73,8 +73,8 @@ class Website < ActiveRecord::Base
         lexec "git clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin.git #{Summit::Application.config.gitolite_tmp}"
         unless user_in_conf?
           add_user_to_conf
-          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp.join('.git')} --work-tree=#{Summit::Application.config.gitolite_tmp} add ."
-          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp.join('.git')} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp + '.git'} --work-tree=#{Summit::Application.config.gitolite_tmp} add ."
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp + '.git'} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "commit -m 'added user #{Summit::Application.config.gitolite_user} to #{name}'"
           lexec "git push origin master"
         end
@@ -170,7 +170,7 @@ class Website < ActiveRecord::Base
   end
 
   def add_user_to_conf
-    file_name     = Summit::Application.config.gitolite_tmp.join('conf', 'gitolite.conf')
+    file_name     = Summit::Application.config.gitolite_tmp + '/conf/gitolite.conf'
     file_content  = File.read(file_name)
     repo_line     = "\nrepo #{name}\n"
     line_to_add   = "    RW+     =   #{Summit::Application.config.gitolite_user}"
