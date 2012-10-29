@@ -1,5 +1,5 @@
 class Website < ActiveRecord::Base
-  before_save :create_deploy_dir, :create_post_receive_file, :create_nginx_file, :enable_nginx, :enable_git
+  before_save :create_deploy_dir , :create_post_receive_file, :create_nginx_file, :enable_nginx, :enable_git
   before_create :add_user_to_repository
   validates_presence_of :deploy_path, :domain, :name, :nginx_path, :post_receive_path, :enabled_nginx_path,
                         :enabled_git_path, :git_repo_path
@@ -8,7 +8,8 @@ class Website < ActiveRecord::Base
   validates_format_of :deploy_path, :with => Summit::Application.config.valid_deploy_path,
                 :message => "should match #{Summit::Application.config.valid_deploy_path.source.to_s.gsub(/\\|\./,'')}"
   attr_accessible :enabled_git_path, :enabled_nginx_path, :deploy_path, :domain, :git_enabled, :name, :nginx_enabled,
-                  :nginx_path, :post_receive_path, :git_repo_path
+                  :nginx_path, :post_receive_path, :git_repo_path, :azmodan
+  attr_accessor :azmodan
 
   def run_step(step)
     case step
@@ -40,7 +41,7 @@ class Website < ActiveRecord::Base
 
   def user_in_conf?
     begin
-      file_name     = Summit::Application.config.gitolite_tmp.join('conf', 'gitolite.conf')
+      file_name       = Summit::Application.config.gitolite_tmp.join('conf', 'gitolite.conf')
       if File.exists?(file_name)
         file_content  = File.read(file_name)
         repo_line     = "\nrepo #{name}\n"
@@ -59,12 +60,14 @@ class Website < ActiveRecord::Base
   private
 
   def add_user_to_repository(force = false)
+
+    #chmod 777 /srv/www/summit.econtriver.com/releases/20121029_003513/tmp/
     begin
       if !user_in_conf? or force
         #lexec "git config user.name summit"
         #lexec "git config user.email summit@econtriver.com"
         FileUtils.rm_rf(Summit::Application.config.gitolite_tmp)
-        lexec "git clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin #{Summit::Application.config.gitolite_tmp} 2>&1"
+        lexec "git clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin #{Summit::Application.config.gitolite_tmp}"
         unless user_in_conf?
           add_user_to_conf
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp.join('.git')} --work-tree=#{Summit::Application.config.gitolite_tmp} add ."
@@ -98,8 +101,8 @@ class Website < ActiveRecord::Base
   def enable_git
     begin
       create_dir File.dirname(enabled_git_path)
-      lexec "unlink #{enabled_git_path} 2>&1" if File.exists?(enabled_git_path)
-      lexec "ln -s #{git_repo_path} #{enabled_git_path} 2>&1" if git_enabled
+      lexec "unlink #{enabled_git_path}" if File.exists?(enabled_git_path)
+      lexec "ln -s #{git_repo_path} #{enabled_git_path}" if git_enabled
       true
     rescue Exception => e
       errors[:base] << "Could not #{caller[0][/`.*'/][1..-2].gsub(/_/,' ')}, due to:<br /> #{e.message}".html_safe
@@ -108,10 +111,13 @@ class Website < ActiveRecord::Base
   end
 
   def enable_nginx
+      #chmod 777 /etc/nginx/sites-enabled/summit.econtriver.com
+      #chmod 777 /etc/nginx/sites-available/summit.econtriver.com
+    #chmod 777 /etc/nginx/sites-enabled/
     begin
       create_dir File.dirname(enabled_nginx_path)
-      lexec "unlink #{enabled_nginx_path} 2>&1" if File.exists?(enabled_nginx_path)
-      lexec "ln -s #{nginx_path} #{enabled_nginx_path} 2>&1" if nginx_enabled
+      lexec "unlink #{enabled_nginx_path}" if File.exists?(enabled_nginx_path)
+      lexec "ln -s #{nginx_path} #{enabled_nginx_path}" if nginx_enabled
       true
     rescue Exception => e
       errors[:base] << "Could not #{caller[0][/`.*'/][1..-2].gsub(/_/,' ')}, due to:<br /> #{e.message}".html_safe
@@ -120,13 +126,22 @@ class Website < ActiveRecord::Base
   end
 
   def create_post_receive_file(force = false)
+    #chmod 777 /home/g/repositories/summit.git
+    #chmod 777 /home/g/repositories/summit.git/hooks/post-receive
     begin
+      #Process.euid = 0
+      #Process.uid = 0
+      #uid = Etc.getpwnam("root").uid
+      #Process::Sys.setuid(uid)
       FileUtils.rm_rf(post_receive_path) if force
       unless File.exists?(post_receive_path)
         create_dir File.dirname(post_receive_path)
+        lexec "touch #{post_receive_path}"
+        lexec "chmod 777 #{File.dirname(File.dirname(post_receive_path))}"
+        lexec "chmod 777 #{File.dirname(post_receive_path)}"
+        lexec "chmod 777 #{post_receive_path}"
         erb = ERB.new(File.read(File.join(Rails.root, 'lib', 'templates', 'post-receive'))).result(binding)
         File.open(post_receive_path, 'w') { |f| f.write(erb) }
-        File.chmod(0755,post_receive_path)
       end
       true
     rescue Exception => e
@@ -169,16 +184,25 @@ class Website < ActiveRecord::Base
   def create_dir(path)
     unless Dir.exists?(path)
       #Dir.mkdir_p(path)
-      lexec "mkdir -p #{path} 2>&1"
+      lexec "mkdir -p #{path}"
+      lexec "ls #{path}"
     end
-    raise Exception, "Directory not present after creation #{path}" unless Dir.exists?(path)
+    #raise Exception, "Directory not present after creation #{path}" unless Dir.exists?(path)
     true
   end
 
   def lexec(cmd)
-    output = `#{cmd}`
+    Rails.logger.debug cmd
+    output = `sudo #{cmd} 2>&1`
     raise output unless /exit 0/ =~ $?.to_s
     output
   end
+
+  #def lexec(command)
+  #  output = `echo #{azmodan} | sudo -S '#{command}'`
+  #  #end
+  #  raise output unless /exit 0/ =~ $?.to_s
+  #  output
+  #end
 
 end

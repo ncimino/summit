@@ -7,7 +7,7 @@ require File.expand_path('../config/application', __FILE__)
 
 Summit::Application.load_tasks
 
-files = ['config/initializers/omniauth.rb','config/database.yml','config/initializers/secret_token.rb']
+files = ['config/database.yml','config/initializers/secret_token.rb']
 
 domain = "#{Rails.application.class.parent_name.downcase}.econtriver.com"
 user = "root"  # The server's user for deploys

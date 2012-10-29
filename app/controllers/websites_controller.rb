@@ -41,6 +41,7 @@ class WebsitesController < ApplicationController
 
   def update
     @website = Website.find(params[:id])
+
     if @website.update_attributes(params[:website])
       redirect_to @website, notice: 'Website was successfully updated.'
     else
