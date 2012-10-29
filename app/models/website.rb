@@ -61,12 +61,16 @@ class Website < ActiveRecord::Base
   def add_user_to_repository(force = false)
 
     #chmod 777 /srv/www/summit.econtriver.com/releases/20121029_003513/tmp/
+    Rails.logger.debug "here"
     begin
-      if !user_in_conf? or force
+      if force or !user_in_conf?
         #lexec "git config user.name summit"
         #lexec "git config user.email summit@econtriver.com"
-        FileUtils.rm_rf(Summit::Application.config.gitolite_tmp)
-        lexec "git clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin #{Summit::Application.config.gitolite_tmp}"
+        #FileUtils.rm_rf(Summit::Application.config.gitolite_tmp)
+        lexec "rm -rf #{Summit::Application.config.gitolite_tmp}"
+        #create_dir Summit::Application.config.gitolite_tmp
+        #lexec "chmod 777 #{Summit::Application.config.gitolite_tmp}"
+        lexec "git clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin.git #{Summit::Application.config.gitolite_tmp}"
         unless user_in_conf?
           add_user_to_conf
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp.join('.git')} --work-tree=#{Summit::Application.config.gitolite_tmp} add ."
