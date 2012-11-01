@@ -74,7 +74,7 @@ class Website < ActiveRecord::Base
         #lexec "rm -rf #{Summit::Application.config.gitolite_tmp}"
         #create_dir Summit::Application.config.gitolite_tmp
         #lexec "chmod 777 #{Summit::Application.config.gitolite_tmp}"
-        if File.exists?(Summit::Application.config.gitolite_tmp.join(".git"))
+        if File.exists?(Summit::Application.config.gitolite_tmp)
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "fetch"
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
@@ -95,8 +95,8 @@ class Website < ActiveRecord::Base
                 "add ."
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "commit -m 'added user #{Summit::Application.config.gitolite_user} to #{name}'"
-          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
-                "push origin master"
+          #lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+          #      "push origin master"
         end
       end
       true
