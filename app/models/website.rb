@@ -40,7 +40,7 @@ class Website < ActiveRecord::Base
 
   def user_in_conf?
     begin
-      file_name       = Summit::Application.config.gitolite_tmp + '/conf/gitolite.conf'
+      file_name       = Summit::Application.config.gitolite_tmp.join('conf', 'gitolite.conf')
       if File.exists?(file_name)
         file_content  = File.read(file_name)
         repo_line     = "\nrepo #{name}\n"
@@ -61,22 +61,42 @@ class Website < ActiveRecord::Base
   def add_user_to_repository(force = false)
 
     #chmod 777 /srv/www/summit.econtriver.com/releases/20121029_003513/tmp/
-    Rails.logger.debug "here"
+    #Rails.logger.debug "Tmp Dir: #{Summit::Application.config.gitolite_tmp.join('.git')}"
     begin
       if force or !user_in_conf?
         #lexec "git config user.name summit"
+        #lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+        #      "config user.name summit"
         #lexec "git config user.email summit@econtriver.com"
+        #lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+        #      "config user.email summit@econtriver.com"
         #FileUtils.rm_rf(Summit::Application.config.gitolite_tmp)
-        lexec "rm -rf #{Summit::Application.config.gitolite_tmp}"
+        #lexec "rm -rf #{Summit::Application.config.gitolite_tmp}"
         #create_dir Summit::Application.config.gitolite_tmp
         #lexec "chmod 777 #{Summit::Application.config.gitolite_tmp}"
-        lexec "git clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin.git #{Summit::Application.config.gitolite_tmp}"
+        if File.exists?(Summit::Application.config.gitolite_tmp.join("config"))
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                "fetch"
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                "merge origin/master"
+          #lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+          #      "pull origin master"
+        else
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                "clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin.git #{Summit::Application.config.gitolite_tmp}"
+        end
+        lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                  "config user.name summit"
+        lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                  "config user.email summit@econtriver.com"
         unless user_in_conf?
           add_user_to_conf
-          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp + '.git'} --work-tree=#{Summit::Application.config.gitolite_tmp} add ."
-          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp + '.git'} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                "add ."
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "commit -m 'added user #{Summit::Application.config.gitolite_user} to #{name}'"
-          lexec "git push origin master"
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                "push origin master"
         end
       end
       true
@@ -140,9 +160,9 @@ class Website < ActiveRecord::Base
       FileUtils.rm_rf(post_receive_path) if force
       unless File.exists?(post_receive_path)
         create_dir File.dirname(post_receive_path)
-        lexec "touch #{post_receive_path}"
         lexec "chmod 777 #{File.dirname(File.dirname(post_receive_path))}"
         lexec "chmod 777 #{File.dirname(post_receive_path)}"
+        lexec "touch #{post_receive_path}"
         lexec "chmod 777 #{post_receive_path}"
         erb = ERB.new(File.read(File.join(Rails.root, 'lib', 'templates', 'post-receive'))).result(binding)
         File.open(post_receive_path, 'w') { |f| f.write(erb) }
@@ -170,12 +190,13 @@ class Website < ActiveRecord::Base
   end
 
   def add_user_to_conf
-    file_name     = Summit::Application.config.gitolite_tmp + '/conf/gitolite.conf'
+    file_name     = Summit::Application.config.gitolite_tmp.join('conf', 'gitolite.conf')
     file_content  = File.read(file_name)
     repo_line     = "\nrepo #{name}\n"
     line_to_add   = "    RW+     =   #{Summit::Application.config.gitolite_user}"
     add           = repo_line + line_to_add + "\n"
 
+    lexec "chmod 777 #{file_name}"
     # add user to repo unless the user already exists for this repo
     File.open(file_name,'w') { |f| f.write(file_content.gsub(/#{repo_line}/,add))} unless user_in_conf?
     # add user and repo unless the repo exists
