@@ -95,8 +95,8 @@ class Website < ActiveRecord::Base
                 "add ."
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "commit -m 'added user #{Summit::Application.config.gitolite_user} to #{name}'"
-          #lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
-          #      "push origin master"
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+                "push origin master"
         end
       end
       true
