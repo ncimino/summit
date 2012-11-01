@@ -1,0 +1,9 @@
+<% unless @websites.empty? %>
+    <aside>
+      <nav class="box">
+        <ul>
+          <%= render :partial => "websites/links", :collection => @websites, :as => :website %>
+        </ul>
+      </nav>
+    </aside>
+<% end %>

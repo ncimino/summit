@@ -34,8 +34,8 @@
 
 <% content_for :userbar do %>
     <% if user_signed_in? %>
-
         <%= render 'shared/sidebar', :sidebar => @display_pages.userbar %>
+        <%= render 'shared/websitebar', :sidebar => @display_pages.userbar %>
     <% end %>
 <% end %>
 

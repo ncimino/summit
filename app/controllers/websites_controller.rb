@@ -12,7 +12,7 @@ class WebsitesController < ApplicationController
   end
 
   def index
-    @websites = Website.all
+    #@websites = Website.all #in app controller
   end
 
   def show
