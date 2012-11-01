@@ -74,7 +74,7 @@ class Website < ActiveRecord::Base
         #lexec "rm -rf #{Summit::Application.config.gitolite_tmp}"
         #create_dir Summit::Application.config.gitolite_tmp
         #lexec "chmod 777 #{Summit::Application.config.gitolite_tmp}"
-        if File.exists?(Summit::Application.config.gitolite_tmp.join("config"))
+        if File.exists?(Summit::Application.config.gitolite_tmp.join(".git"))
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "fetch"
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +

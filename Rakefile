@@ -9,7 +9,7 @@ Summit::Application.load_tasks
 
 files = ['config/database.yml','config/initializers/secret_token.rb']
 
-domain = "#{Rails.application.class.parent_name.downcase}.econtriver.com"
+domain = "summit.econtriver.com"
 user = "root"  # The server's user for deploys
 deploy_to = "/srv/www/#{domain}"
 
