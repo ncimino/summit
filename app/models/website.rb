@@ -93,7 +93,7 @@ class Website < ActiveRecord::Base
 
   def create_nginx_file(force = false)
     begin
-      lexec "rm -rf nginx_path" if force
+      lexec "rm -rf #{nginx_path}" if force
       unless File.exists?(nginx_path)
         create_dir File.dirname(nginx_path)
         lexec "touch #{nginx_path}"
