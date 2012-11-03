@@ -11,7 +11,7 @@ function set_domain_defaults(name, force) {
 }
 
 function set_name_defaults(name, force) {
-    auto_fill("#website_domain", name, force)
+    auto_fill("#website_domain", name)
     auto_fill("#website_post_receive_path","/home/g/repositories/" + name + ".git/hooks/post-receive", force)
     auto_fill("#website_git_repo_path","/home/g/repositories/" + name + ".git", force)
     auto_fill("#website_enabled_git_path","/srv/www/git.econtriver.com/public_html/" + name + ".git", force)

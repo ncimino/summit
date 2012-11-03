@@ -59,28 +59,13 @@ class Website < ActiveRecord::Base
   private
 
   def add_user_to_repository(force = false)
-
-    #chmod 777 /srv/www/summit.econtriver.com/releases/20121029_003513/tmp/
-    #Rails.logger.debug "Tmp Dir: #{Summit::Application.config.gitolite_tmp.join('.git')}"
     begin
       if force or !user_in_conf?
-        #lexec "git config user.name summit"
-        #lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
-        #      "config user.name summit"
-        #lexec "git config user.email summit@econtriver.com"
-        #lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
-        #      "config user.email summit@econtriver.com"
-        #FileUtils.rm_rf(Summit::Application.config.gitolite_tmp)
-        #lexec "rm -rf #{Summit::Application.config.gitolite_tmp}"
-        #create_dir Summit::Application.config.gitolite_tmp
-        #lexec "chmod 777 #{Summit::Application.config.gitolite_tmp}"
         if File.exists?(Summit::Application.config.gitolite_tmp)
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "fetch"
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "merge origin/master"
-          #lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
-          #      "pull origin master"
         else
           lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin.git #{Summit::Application.config.gitolite_tmp}"
@@ -108,9 +93,11 @@ class Website < ActiveRecord::Base
 
   def create_nginx_file(force = false)
     begin
-      FileUtils.rm_rf(nginx_path) if force
+      lexec "rm -rf nginx_path" if force
       unless File.exists?(nginx_path)
         create_dir File.dirname(nginx_path)
+        lexec "touch #{nginx_path}"
+        lexec "chmod 777 #{nginx_path}"
         erb = ERB.new(File.read(File.join(Rails.root, 'lib', 'templates', 'nginx'))).result(binding)
         File.open(nginx_path, 'w') { |f| f.write(erb) }
         lexec "chmod 644 #{nginx_path}"
