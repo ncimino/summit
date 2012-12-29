@@ -112,7 +112,8 @@ class Website < ActiveRecord::Base
   def enable_git
     begin
       create_dir File.dirname(enabled_git_path)
-      lexec "unlink #{enabled_git_path}" if File.exists?(enabled_git_path) || File.ftype?(enabled_git_path) == "link"
+      lexec "rm -rf #{enabled_git_path}" if File.exists?(enabled_git_path)
+      lexec "unlink #{enabled_git_path}" if File.ftype(enabled_git_path) == "link"
       lexec "ln -s #{git_repo_path} #{enabled_git_path}" if git_enabled
       true
     rescue Exception => e
