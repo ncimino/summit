@@ -1,6 +1,6 @@
 class Website < ActiveRecord::Base
-  before_save :create_deploy_dir , :create_post_receive_file, :create_nginx_file, :enable_nginx, :enable_git
-  before_create :add_user_to_repository
+  before_save :create_deploy_dir, :create_nginx_file, :enable_nginx, :enable_git
+  before_create :add_user_to_repository, :create_post_receive_file
   validates_presence_of :deploy_path, :domain, :name, :nginx_path, :post_receive_path, :enabled_nginx_path,
                         :enabled_git_path, :git_repo_path
   validates_uniqueness_of :deploy_path, :domain, :name, :nginx_path, :post_receive_path, :enabled_nginx_path,
@@ -137,16 +137,9 @@ class Website < ActiveRecord::Base
   end
 
   def create_post_receive_file(force = false)
-    #chmod 777 /home/g/repositories/summit.git
-    #chmod 777 /home/g/repositories/summit.git/hooks/post-receive
     begin
-      #Process.euid = 0
-      #Process.uid = 0
-      #uid = Etc.getpwnam("root").uid
-      #Process::Sys.setuid(uid)
-      FileUtils.rm_rf(post_receive_path) if force
-      unless File.exists?(post_receive_path)
-        create_dir File.dirname(post_receive_path)
+      if force or !File.exists?(post_receive_path)
+        #create_dir File.dirname(post_receive_path)
         lexec "chmod 777 #{File.dirname(File.dirname(post_receive_path))}"
         lexec "chmod 777 #{File.dirname(post_receive_path)}"
         lexec "touch #{post_receive_path}"
@@ -156,7 +149,7 @@ class Website < ActiveRecord::Base
       end
       true
     rescue Exception => e
-      errors[:base] << "Could not #{caller[0][/`.*'/][1..-2].gsub(/_/,' ')}, due to:<br /> #{e.message}".html_safe
+      errors[:base] << "Could not #{caller[0][/`.*'/][1..-2].gsub(/_/,' ')}, (have you pushed to the repo yet?) due to:<br /> #{e.message}".html_safe
       false
     end
   end
@@ -195,7 +188,6 @@ class Website < ActiveRecord::Base
 
   def create_dir(path)
     unless Dir.exists?(path)
-      #Dir.mkdir_p(path)
       lexec "mkdir -p #{path}"
       lexec "ls #{path}"
     end
@@ -209,12 +201,5 @@ class Website < ActiveRecord::Base
     raise output unless /exit 0/ =~ $?.to_s
     output
   end
-
-  #def lexec(command)
-  #  output = `echo #{azmodan} | sudo -S '#{command}'`
-  #  #end
-  #  raise output unless /exit 0/ =~ $?.to_s
-  #  output
-  #end
 
 end
