@@ -72,17 +72,17 @@ class Website < ActiveRecord::Base
           #      "clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin.git #{Summit::Application.config.gitolite_tmp}"
         end
         lexec "git clone #{Summit::Application.config.git_deploy_loc}:gitolite-admin.git #{Summit::Application.config.gitolite_tmp}"
-        lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+        lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp}/.git --work-tree=#{Summit::Application.config.gitolite_tmp} " +
               "config user.name summit"
-        lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+        lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp}/.git --work-tree=#{Summit::Application.config.gitolite_tmp} " +
               "config user.email summit@econtriver.com"
         unless user_in_conf?
           add_user_to_conf
-          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp}/.git --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "add ."
-          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp}/.git --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "commit -m 'added user #{Summit::Application.config.gitolite_user} to #{name}'"
-          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp} --work-tree=#{Summit::Application.config.gitolite_tmp} " +
+          lexec "git --git-dir=#{Summit::Application.config.gitolite_tmp}/.git --work-tree=#{Summit::Application.config.gitolite_tmp} " +
                 "push origin master"
         end
       end
@@ -114,8 +114,10 @@ class Website < ActiveRecord::Base
   def enable_git
     begin
       create_dir File.dirname(enabled_git_path)
-      lexec "rm -rf #{enabled_git_path}" if File.exists?(enabled_git_path)
+      #lexec "rm -rf #{enabled_git_path}" if File.exists?(enabled_git_path)
       lexec "unlink #{enabled_git_path}" if File.ftype(enabled_git_path) == "link"
+      #lexec "unlink #{enabled_git_path}"
+      #if File.exists?(enabled_git_path)
       lexec "ln -s #{git_repo_path} #{enabled_git_path}" if git_enabled
       true
     rescue Exception => e
